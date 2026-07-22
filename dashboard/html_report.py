@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import html
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -87,6 +88,38 @@ def score_dot(score: float) -> str:
     return f'<span class="dot" style="background:{STATUS[status]}"></span>'
 
 
+# Организационно-правовые формы, которые в сайдбаре не нужны — там место
+# ограничено, а полное юридическое наименование остаётся на странице
+# детализации компании (h1) и в сводной таблице.
+_LEGAL_FORM_RE = re.compile(
+    r"^\s*(?:"
+    r"общество\s+с\s+ограниченной\s+ответственностью"
+    r"|публичное\s+акционерное\s+общество"
+    r")\b[\s.,]*",
+    re.IGNORECASE,
+)
+
+
+def short_company_name(name: str) -> str:
+    """Название компании без организационно-правовой формы (для сайдбара).
+
+    Внешние кавычки снимаются, только если их ровно две (простой случай
+    вида `ООО "Название"`) — у части реальных выгрузок в названии есть
+    внутренние кавычки (например, `"Группа компаний "Самолет""`), и наивное
+    снятие первого/последнего символа в таком случае обрежет не ту кавычку.
+    """
+    stripped = _LEGAL_FORM_RE.sub("", name).strip()
+    quotes_total = sum(stripped.count(q) for q in "\"«»")
+    if (
+        quotes_total == 2
+        and len(stripped) >= 2
+        and stripped[0] in "\"«"
+        and stripped[-1] in "\"»"
+    ):
+        stripped = stripped[1:-1].strip()
+    return stripped or name
+
+
 # --- Сайдбар -------------------------------------------------------------
 
 def build_sidebar(results: list[dict]) -> str:
@@ -99,7 +132,7 @@ def build_sidebar(results: list[dict]) -> str:
         f"""
       <button class="nav-item" data-key="{esc(r['_key'])}" type="button">
         <span class="nav-dot" style="background:{STATUS[CLASS_STATUS[r['class_cur']]]}"></span>
-        <span class="nav-item-label">{esc(r['company'])}</span>
+        <span class="nav-item-label">{esc(short_company_name(r['company']))}</span>
       </button>"""
         for r in results
     )
