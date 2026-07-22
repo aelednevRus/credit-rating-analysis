@@ -21,7 +21,9 @@ credit-rating/
 │   └── pipeline.py     # сквозной прогон файл/папка -> CompanyResult
 ├── dashboard/
 │   └── html_report.py  # статический HTML-дашборд (только представление)
-└── docs/METHODOLOGY.md # ИСТОЧНИК ИСТИНЫ по формулам, порогам и весам
+├── docs/METHODOLOGY.md # ИСТОЧНИК ИСТИНЫ по формулам, порогам и весам
+├── Dockerfile           # образ + cron (0 9-18 * * *) для авто-пересборки дашборда
+└── docker-compose.yml   # volume-монтирование data/input (ro) и data/output
 ```
 
 ## Ключевые правила

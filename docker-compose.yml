@@ -1,0 +1,12 @@
+name: credit-rating-analysis
+
+services:
+  dashboard:
+    build: .
+    container_name: credit-rating-dashboard
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - ./data/input:/app/data/input:ro
+      - ./data/output:/app/data/output

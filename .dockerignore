@@ -1,0 +1,14 @@
+.venv
+__pycache__
+*.pyc
+.git
+.pytest_cache
+.DS_Store
+.claude
+tests
+scripts
+data
+*.md
+Dockerfile
+docker-compose.yml
+requirements-dev.txt
