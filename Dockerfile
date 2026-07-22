@@ -20,8 +20,12 @@ COPY credit_analysis/ credit_analysis/
 COPY dashboard/ dashboard/
 
 # Каждый час с 9:00 до 18:00 (по TZ контейнера) перечитать data/input и
-# пересобрать статический HTML-дашборд в data/output/report.html
-RUN echo "0 9-18 * * * cd /app && python dashboard/html_report.py /app/data/input /app/data/output/report.html >> /var/log/cron.log 2>&1" > /etc/cron.d/dashboard-cron \
+# пересобрать статический HTML-дашборд в data/output/report.html.
+# cron запускает задачи с минимальным PATH (без /usr/local/bin, где лежит
+# python в этом образе) — поэтому PATH задан явно и python вызван по
+# полному пути, иначе задача молча падает с "python: not found".
+RUN echo "PATH=/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin" > /etc/cron.d/dashboard-cron \
+    && echo "0 9-18 * * * cd /app && /usr/local/bin/python dashboard/html_report.py /app/data/input /app/data/output/report.html >> /var/log/cron.log 2>&1" >> /etc/cron.d/dashboard-cron \
     && chmod 0644 /etc/cron.d/dashboard-cron \
     && crontab /etc/cron.d/dashboard-cron \
     && touch /var/log/cron.log
