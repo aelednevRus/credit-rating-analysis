@@ -16,6 +16,8 @@ def test_render_html_empty_state():
     doc = render_html([], source_label="data/input")
     assert "Нет данных для отображения" in doc
     assert "<script>" in doc  # тема всё равно переключаема
+    assert 'class="nav-item nav-summary active" data-key="__summary__"' in doc
+    assert "Компании (" not in doc  # нет компаний — секция в сайдбаре не выводится
 
 
 def test_render_html_contains_all_companies_and_is_self_contained():
@@ -51,9 +53,16 @@ def test_render_html_contains_all_companies_and_is_self_contained():
     # Отсортировано по убыванию балла: Альфа (80.0) должна идти раньше Беты (10.0)
     assert doc.index('ООО &quot;Альфа&quot;') < doc.index('АО &quot;Бета&quot;')
 
-    # Первая компания активна по умолчанию, остальные скрыты до клика
-    assert 'class="company-panel active" data-key="a.xlsx"' in doc
-    assert 'class="company-panel" data-key="b.xlsx"' in doc
+    # Сайдбар: закладка «Свод» сверху и активна по умолчанию, ниже — компании
+    assert doc.index('data-key="__summary__"') < doc.index('data-key="a.xlsx"')
+    assert 'class="nav-item nav-summary active" data-key="__summary__"' in doc
+    assert '<span class="nav-item-label">ООО &quot;Альфа&quot;</span>' in doc
+    assert '<span class="nav-item-label">АО &quot;Бета&quot;</span>' in doc
+
+    # Страница «Свод» активна по умолчанию, страницы компаний скрыты до клика
+    assert 'class="page page-summary active" data-key="__summary__"' in doc
+    assert 'class="page page-company" data-key="a.xlsx"' in doc
+    assert 'class="page page-company" data-key="b.xlsx"' in doc
 
     # Класс-бейджи используют статусную палитру (good=A, critical=D)
     assert "#0ca30c" in doc  # good — класс A
