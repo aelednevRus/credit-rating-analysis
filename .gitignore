@@ -10,5 +10,6 @@ mcp_docker.log
 # Реальная отчётность компаний и результаты расчёта не хранятся в репозитории
 data/input/*.xlsx
 data/output/*.json
+data/output/*.html
 !data/input/.gitkeep
 !data/output/.gitkeep
