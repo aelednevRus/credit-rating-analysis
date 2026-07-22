@@ -118,6 +118,9 @@ def test_render_html_sidebar_hides_legal_form_but_page_header_keeps_it():
     assert '<span class="nav-item-label">РУССКИЙ КВАРЦ</span>' in doc
     assert "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ" not in doc.split("</nav>")[0]
 
+    # В диаграмме «Комплексный балл по компаниям» на «Своде» — тоже без формы
+    assert '<div class="bar-label">РУССКИЙ КВАРЦ</div>' in doc
+
     # На странице детализации полное юридическое наименование сохраняется
     assert 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ &quot;РУССКИЙ КВАРЦ&quot;' in doc
 

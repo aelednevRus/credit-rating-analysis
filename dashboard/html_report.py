@@ -219,7 +219,7 @@ def build_score_chart(results: list[dict]) -> str:
         width = max(score, 1.5)  # видимая полоска даже при близком к 0 балле
         bars.append(f"""
         <div class="bar-row">
-          <div class="bar-label">{esc(r['company'])}</div>
+          <div class="bar-label">{esc(short_company_name(r['company']))}</div>
           <div class="bar-track">
             <div class="bar-fill" style="width:{width:.1f}%;background:{STATUS[status]}"></div>
           </div>
