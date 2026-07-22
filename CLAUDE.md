@@ -13,14 +13,14 @@ credit-rating/
 ├── data/
 │   ├── input/          # входная отчётность БФО (.xlsx) — источник данных
 │   └── output/         # результаты (results.json и пр.)
-├── credit_analysis/    # ядро методики (чистый Python, без Streamlit)
+├── credit_analysis/    # ядро методики (чистый Python, без веб-фреймворков)
 │   ├── extract.py      # чтение .xlsx -> нормализованные показатели (RawReport)
 │   ├── metrics.py      # 11 коэффициентов + балльная оценка «светофор»
 │   ├── rating.py       # к��мплексный балл 0–100 + класс A/B/C/D
 │   ├── conclusions.py  # текстовые качественные выводы
 │   └── pipeline.py     # сквозной прогон файл/папка -> CompanyResult
 ├── dashboard/
-│   └── app.py          # Streamlit-дашборд (только представление)
+│   └── html_report.py  # статический HTML-дашборд (только представление)
 └── docs/METHODOLOGY.md # ИСТОЧНИК ИСТИНЫ по формулам, порогам и весам
 ```
 
@@ -28,8 +28,8 @@ credit-rating/
 1. **Методика — единственный источник истины.** Любые формулы, пороги
    (`THRESHOLDS`), веса (`WEIGHTS`) и классы должны совпадать с
    `docs/METHODOLOGY.md`. Меняешь логику — сначала обнови документ.
-2. **Разделение слоёв.** `credit_analysis/` не зависит от Streamlit и
-   pandas-представления. Вся визуализация — в `dashboard/`.
+2. **Разделение слоёв.** `credit_analysis/` не зависит от слоя представления.
+   Вся визуализация — в `dashboard/`.
 3. **Устойчивость чтения.** Строки отчётности ищем по коду РСБУ (1200,
    2110, ...), а не по фиксированным координатам ячеек. Отрицательные суммы
    в скобках и пропуски «-» нормализует `extract._to_number`.
@@ -53,8 +53,8 @@ pip install -r requirements.txt
 # Прогон анализа из CLI (папка или один файл)
 python -m credit_analysis.pipeline data/input
 
-# Запуск дашборда
-streamlit run dashboard/app.py
+# Генерация HTML-дашборда
+python dashboard/html_report.py
 ```
 
 ## Do / Don't
